@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>X Control Center</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <section id="lock" class="lock">
+    <div class="lock-card">
+      <div class="brand"><div class="logo">X</div><div><h1>X Control Center</h1><p>لوحة خاصة لإدارة X واكتشاف المحتوى</p></div></div>
+      <label>كلمة المرور</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="أدخل كلمة المرور">
+      <button id="login" class="primary wide">دخول</button>
+      <div id="loginError" class="error"></div>
+      <p class="note">الدخول بكلمة مرور فقط. لا يوجد اسم مستخدم أو بريد إلكتروني.</p>
+    </div>
+  </section>
+
+  <div id="app" class="app hidden">
+    <aside class="side">
+      <div class="brand"><div class="logo">X</div><div><h1>X Control Center</h1><p>لوحتك الخاصة</p></div></div>
+      <nav>
+        <button data-view="home" class="active">نظرة عامة</button>
+        <button data-view="discover">اكتشاف التغريدات</button>
+        <button data-view="accounts">حسابات X</button>
+        <button data-view="compose">النشر والرد</button>
+        <button data-view="saved">المحفوظات</button>
+        <button data-view="settings">الإعدادات</button>
+      </nav>
+      <div class="side-bottom">
+        <div class="source-line"><span id="sourceDot" class="dot"></span><span id="sourceState">المصدر غير مفحوص</span></div>
+        <button id="logout" class="ghost wide">قفل اللوحة</button>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <div><h2 id="title">نظرة عامة</h2><p id="subtitle">لوحة خاصة وآمنة داخل متصفحك</p></div>
+        <div class="actions"><button id="refresh" class="secondary">تحديث</button><button id="theme" class="ghost">المظهر</button></div>
+      </header>
+
+      <section id="view-home" class="view">
+        <div class="stats">
+          <article><span>الحسابات</span><b id="kAccounts">0</b><small>حسابات X المرتبطة</small></article>
+          <article><span>المحفوظات</span><b id="kSaved">0</b><small>تغريدات محفوظة</small></article>
+          <article><span>نتائج البحث</span><b id="kResults">0</b><small>آخر عملية بحث</small></article>
+          <article><span>المصدر</span><b id="kSource">-</b><small>FxTwitter العام</small></article>
+        </div>
+        <div class="two">
+          <section class="card"><div class="card-head"><h3>الترندات الحالية</h3><button id="loadTrends" class="secondary">تحميل</button></div><div id="trendBox" class="trends"><span class="muted">اضغط تحميل لعرض الترندات.</span></div></section>
+          <section class="card"><div class="card-head"><h3>وصول سريع</h3></div><div class="quick"><button data-go="discover" class="secondary">أفضل التغريدات</button><button data-go="accounts" class="secondary">ربط حساب</button><button data-go="compose" class="secondary">كتابة منشور</button><button data-go="settings" class="secondary">إعداد OAuth</button></div><div class="info">البحث يعتمد على بيانات عامة حقيقية. النشر المباشر يتم فقط بعد تفويض حساب X.</div></section>
+        </div>
+        <section class="card"><div class="card-head"><h3>أفضل النتائج الأخيرة</h3></div><div id="homeResults" class="tweets empty">لم يتم تشغيل بحث بعد.</div></section>
+      </section>
+
+      <section id="view-discover" class="view hidden">
+        <section class="card">
+          <div class="card-head"><h3>البحث والترتيب</h3><span class="tag">بيانات عامة حقيقية</span></div>
+          <div class="filters">
+            <input id="query" placeholder="كلمة، هاشتاغ أو حساب">
+            <select id="hours"><option value="1">آخر ساعة</option><option value="3">آخر 3 ساعات</option><option value="5">آخر 5 ساعات</option><option value="10">آخر 10 ساعات</option><option value="20">آخر 20 ساعة</option><option value="24" selected>آخر يوم</option></select>
+            <select id="lang"><option value="all">كل اللغات</option><option value="ar">العربية</option><option value="en">الإنجليزية</option><option value="tr">التركية</option></select>
+            <select id="category"><option value="general">عام</option><option value="news">أخبار</option><option value="tech">تقنية</option><option value="sports">رياضة</option><option value="business">اقتصاد وأعمال</option><option value="crypto">كريبتو</option><option value="entertainment">ترفيه</option><option value="science">علوم</option></select>
+            <select id="sort"><option value="views">الأكثر مشاهدة</option><option value="engagement">الأعلى تفاعلًا</option><option value="likes">الأكثر إعجابًا</option><option value="reposts">الأكثر إعادة نشر</option><option value="recent">الأحدث</option></select>
+            <select id="count"><option value="10">أفضل 10</option><option value="20" selected>أفضل 20</option><option value="30">أفضل 30</option></select>
+          </div>
+          <div class="actions topgap"><button id="search" class="primary">تشغيل البحث</button><button id="trendSearch" class="secondary">بحث من الترندات</button><button id="clearSearch" class="ghost">مسح</button></div>
+        </section>
+        <p id="searchMeta" class="muted"></p>
+        <div id="results" class="tweets empty">حدد الفلاتر ثم شغّل البحث.</div>
+      </section>
+
+      <section id="view-accounts" class="view hidden">
+        <section class="card">
+          <div class="card-head"><h3>حسابات X المرتبطة</h3><button id="connectX" class="primary">ربط حساب X</button></div>
+          <div id="accountList" class="stack empty">لا توجد حسابات مرتبطة.</div>
+        </section>
+        <div class="info">الربط يستخدم OAuth 2.0 PKCE. لا يتم طلب كلمة مرور حساب X ولا تخزينها.</div>
+      </section>
+
+      <section id="view-compose" class="view hidden">
+        <div class="two">
+          <section class="card">
+            <div class="card-head"><h3>منشور جديد</h3><span id="counter" class="tag">0 / 280</span></div>
+            <label>الحساب</label><select id="postAccount"></select>
+            <label>النص</label><textarea id="postText" maxlength="280" placeholder="اكتب المنشور هنا..."></textarea>
+            <div class="actions"><button id="publish" class="primary">نشر الآن</button><button id="intentPost" class="secondary">فتح نافذة X الرسمية</button></div>
+          </section>
+          <section class="card">
+            <div class="card-head"><h3>رد على تغريدة</h3></div>
+            <label>رابط التغريدة أو رقمها</label><input id="replyTarget" placeholder="https://x.com/user/status/...">
+            <label>الرد</label><textarea id="replyText" maxlength="280" placeholder="اكتب الرد..."></textarea>
+            <div class="actions"><button id="reply" class="primary">إرسال الرد</button><button id="intentReply" class="secondary">فتح الرد في X</button></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-saved" class="view hidden">
+        <section class="card"><div class="card-head"><h3>المحفوظات</h3><button id="clearSaved" class="danger">مسح الكل</button></div><div id="savedList" class="tweets empty">لا توجد عناصر محفوظة.</div></section>
+      </section>
+
+      <section id="view-settings" class="view hidden">
+        <div class="two">
+          <section class="card"><div class="card-head"><h3>إعداد X OAuth</h3></div><label>Client ID</label><input id="clientId" placeholder="Client ID لتطبيق X"><label>Callback URL</label><input id="callback" readonly><button id="saveOAuth" class="primary">حفظ</button><p class="note">استخدم Callback URL الظاهر هنا داخل إعداد تطبيق X. لا حاجة إلى Client Secret مع PKCE.</p></section>
+          <section class="card"><div class="card-head"><h3>تغيير كلمة مرور اللوحة</h3></div><label>الحالية</label><input id="oldPass" type="password"><label>الجديدة</label><input id="newPass" type="password"><label>تأكيد الجديدة</label><input id="confirmPass" type="password"><button id="changePass" class="primary">تغيير كلمة المرور</button></section>
+          <section class="card"><div class="card-head"><h3>خيارات الاكتشاف</h3></div><label>عدد الترندات المستخدمة للبحث العام</label><input id="seedCount" type="number" min="3" max="15" value="8"><label>حد أدنى للمشاهدات</label><input id="minViews" type="number" min="0" value="0"><button id="savePrefs" class="primary">حفظ الخيارات</button></section>
+          <section class="card"><div class="card-head"><h3>حالة المصادر</h3><button id="health" class="secondary">فحص الآن</button></div><div id="healthBox" class="info">لم يتم الفحص بعد.</div></section>
+        </div>
+      </section>
+    </main>
+
+    <nav class="mobile">
+      <button data-view="home" class="active">الرئيسية</button>
+      <button data-view="discover">اكتشاف</button>
+      <button data-view="accounts">الحسابات</button>
+      <button data-view="compose">نشر</button>
+      <button data-view="settings">إعدادات</button>
+    </nav>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
