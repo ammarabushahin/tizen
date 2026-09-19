@@ -1,177 +1,134 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="dark light">
-  <title>X Control Center</title>
-  <style>
-:root{--bg:#071018;--panel:#0d1722;--panel2:#111e2b;--text:#edf5fb;--muted:#8da0af;--line:#203141;--accent:#1d9bf0;--good:#35c77a;--warn:#f3b33d;--bad:#ef5a65;--shadow:0 20px 60px rgba(0,0,0,.28)}
-:root[data-theme="light"]{--bg:#f3f7fa;--panel:#fff;--panel2:#f7fafc;--text:#14202b;--muted:#627381;--line:#dce6ed;--accent:#0a84d6;--good:#159957;--warn:#b87800;--bad:#cb3342;--shadow:0 16px 45px rgba(22,42,58,.1)}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif}button,input,select,textarea{font:inherit}.hidden{display:none!important}.muted{color:var(--muted)}.error{color:var(--bad);min-height:22px;margin-top:8px;font-size:13px}.note{font-size:12px;line-height:1.7;color:var(--muted)}label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}input,select,textarea{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:11px 12px;outline:none}textarea{min-height:120px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,155,240,.12)}button{border:0;border-radius:11px;padding:10px 13px;cursor:pointer;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text)}.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}.danger{background:rgba(239,90,101,.14);color:#ff969d;border:1px solid rgba(239,90,101,.28)}.wide{width:100%}.topgap{margin-top:10px}.actions{display:flex;gap:8px;flex-wrap:wrap}
-.lock{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at 82% 18%,rgba(29,155,240,.13),transparent 32%),radial-gradient(circle at 12% 88%,rgba(29,155,240,.08),transparent 32%),var(--bg)}.lock-card{width:min(440px,100%);background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:26px;padding:30px;box-shadow:var(--shadow)}.brand{display:flex;align-items:center;gap:12px}.brand h1{font-size:20px;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#6fc9ff);display:grid;place-items:center;font-weight:900;color:#fff}.lock .brand{margin-bottom:22px}.lock button{margin-top:12px}
-.app{min-height:100vh;display:grid;grid-template-columns:245px 1fr}.side{height:100vh;position:sticky;top:0;background:var(--panel);border-left:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column}.side nav{display:grid;gap:6px;margin-top:18px}.side nav button,.mobile button{background:transparent;color:var(--muted);text-align:right}.side nav button:hover,.side nav button.active,.mobile button.active{background:var(--panel2);color:var(--text)}.side-bottom{margin-top:auto;display:grid;gap:10px}.source-line{border:1px solid var(--line);border-radius:12px;padding:10px;font-size:12px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-left:6px}.dot.ok{background:var(--good)}.dot.bad{background:var(--bad)}
-main{padding:22px;min-width:0}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}header h2{margin:0;font-size:22px}header p{margin:5px 0 0;color:var(--muted);font-size:12px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stats article,.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px}.stats span{display:block;color:var(--muted);font-size:12px}.stats b{display:block;font-size:26px;margin-top:7px}.stats small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}.card{margin-bottom:14px}.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.card h3{font-size:16px;margin:0}.tag{display:inline-flex;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:5px 8px;font-size:11px;color:var(--muted)}.quick,.trends{display:flex;flex-wrap:wrap;gap:8px}.trend{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:8px 10px}.info{border:1px solid rgba(29,155,240,.25);background:rgba(29,155,240,.08);border-radius:13px;padding:11px 12px;font-size:12px;line-height:1.7;margin-top:12px}.filters{display:grid;grid-template-columns:1.4fr repeat(5,minmax(105px,.7fr));gap:8px}.tweets{display:grid;gap:10px}.empty{padding:32px 14px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:14px}.tweet{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}.tweet-head{display:flex;justify-content:space-between;gap:12px}.user{display:flex;align-items:center;gap:9px;min-width:0}.avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--panel2)}.avatar-fallback{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#6046ff);font-weight:800}.name{font-weight:800}.handle{font-size:11px;color:var(--muted);direction:ltr;text-align:right}.rank{min-width:34px;height:34px;border-radius:10px;background:var(--panel2);display:grid;place-items:center;color:#61bdf7;font-weight:800}.tweet-text{line-height:1.72;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}.metrics{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.tweet-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.tweet-actions button{padding:8px 10px}.stack{display:grid;gap:10px}.account{border:1px solid var(--line);background:var(--panel2);border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:12px}.account strong{display:block}.account small{color:var(--muted)}.toast{position:fixed;left:18px;bottom:18px;z-index:30;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:11px 14px;box-shadow:var(--shadow);max-width:390px;font-size:12px}.mobile{display:none}
-@media(max-width:1100px){.filters{grid-template-columns:repeat(3,1fr)}.stats{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:760px){.app{display:block;padding-bottom:68px}.side{display:none}main{padding:14px}.stats,.two,.filters{grid-template-columns:1fr}header{align-items:flex-start}.mobile{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--panel);border-top:1px solid var(--line);padding:6px}.mobile button{font-size:11px;text-align:center;padding:9px 3px}.tweet-head{align-items:flex-start}}
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>X Trends Scout</title>
+<style>
+:root{--bg:#071019;--panel:#0d1722;--panel2:#111f2c;--text:#eff7fc;--muted:#8da2b1;--line:#203342;--accent:#1d9bf0;--good:#36c879;--bad:#ef6670;--shadow:0 20px 60px rgba(0,0,0,.28)}
+:root[data-theme="light"]{--bg:#f3f7fa;--panel:#fff;--panel2:#f6f9fb;--text:#14202b;--muted:#647786;--line:#dbe6ed;--accent:#087fd1;--good:#168f55;--bad:#c93745;--shadow:0 15px 45px rgba(24,46,62,.11)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;min-height:100vh}button,input,select{font:inherit}.hidden{display:none!important}.muted{color:var(--muted)}a{text-decoration:none;color:inherit}
+.lock{min-height:100vh;display:grid;place-items:center;padding:22px;background:radial-gradient(circle at 80% 18%,rgba(29,155,240,.14),transparent 31%),radial-gradient(circle at 15% 85%,rgba(29,155,240,.08),transparent 34%),var(--bg)}
+.lockbox{width:min(430px,100%);background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:26px;padding:28px;box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#68c6ff);display:grid;place-items:center;font-weight:900;color:white}.brand h1{font-size:20px;margin:0}.brand p{font-size:12px;color:var(--muted);margin:5px 0 0}.lockbox .brand{margin-bottom:22px}
+label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}input,select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:12px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,155,240,.12)}
+button,.btn{border:0;border-radius:11px;padding:10px 13px;cursor:pointer;font-weight:700}.primary{background:var(--accent);color:#fff}.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text)}.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}.danger{background:rgba(239,102,112,.13);border:1px solid rgba(239,102,112,.28);color:#ff9aa2}.wide{width:100%}.loginerr{min-height:20px;color:var(--bad);font-size:12px;margin-top:8px}.note{color:var(--muted);font-size:11px;line-height:1.7}
+.shell{max-width:1500px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.top-actions{display:flex;gap:8px}.status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}.dot.ok{background:var(--good)}.dot.bad{background:var(--bad)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 8px 26px rgba(0,0,0,.04)}.controls{display:grid;grid-template-columns:1.4fr repeat(6,minmax(110px,.7fr));gap:9px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.seg{display:flex;gap:7px;flex-wrap:wrap}.seg button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px}.stat span{display:block;color:var(--muted);font-size:11px}.stat b{display:block;font-size:22px;margin-top:6px}
+.meta{font-size:12px;color:var(--muted);margin:10px 2px}.results{display:grid;gap:10px}.empty{padding:42px 16px;text-align:center;border:1px dashed var(--line);border-radius:16px;color:var(--muted)}
+.tweet{display:block;background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:14px;transition:.15s transform,.15s border-color}.tweet:hover{transform:translateY(-1px);border-color:rgba(29,155,240,.55)}.tweet-head{display:flex;justify-content:space-between;gap:12px}.user{display:flex;gap:10px;min-width:0}.avatar{width:43px;height:43px;border-radius:50%;object-fit:cover;background:var(--panel2)}.avatar-fallback{width:43px;height:43px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#6550ee);display:grid;place-items:center;font-weight:800}.name{font-weight:800}.handle{font-size:11px;color:var(--muted);direction:ltr;text-align:right}.rank{min-width:35px;height:35px;border-radius:10px;background:var(--panel2);display:grid;place-items:center;color:#64c3ff;font-weight:900}.text{line-height:1.75;margin:10px 0;white-space:pre-wrap;overflow-wrap:anywhere}.metrics{display:flex;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px}.openhint{margin-top:10px;color:var(--accent);font-size:11px;font-weight:700}
+.hashgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.hash{display:block;background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:15px;transition:.15s transform,.15s border-color}.hash:hover{transform:translateY(-1px);border-color:rgba(29,155,240,.55)}.hash-top{display:flex;justify-content:space-between;gap:10px}.hash h3{margin:0;font-size:18px;color:#67c3ff;direction:ltr;text-align:left}.hash .num{width:34px;height:34px;border-radius:10px;background:var(--panel2);display:grid;place-items:center;font-weight:900}.hashmetrics{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.hashmetrics div{background:var(--panel2);border-radius:10px;padding:9px}.hashmetrics span{display:block;color:var(--muted);font-size:10px}.hashmetrics b{font-size:13px;display:block;margin-top:4px}
+.trends{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.trend{display:inline-flex;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:7px 9px;font-size:11px}.trend:hover{border-color:var(--accent)}
+.toast{position:fixed;left:18px;bottom:18px;background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:13px;padding:11px 14px;max-width:390px;font-size:12px;z-index:50}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.62);display:grid;place-items:center;padding:18px;z-index:40}.modalbox{width:min(470px,100%);background:var(--panel);border:1px solid var(--line);border-radius:19px;padding:18px}
+@media(max-width:1150px){.controls{grid-template-columns:repeat(4,1fr)}.hashgrid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:750px){.shell{padding:12px}.top{align-items:flex-start}.controls{grid-template-columns:1fr 1fr}.controls .query{grid-column:1/-1}.summary{grid-template-columns:repeat(2,1fr)}.hashgrid{grid-template-columns:1fr}.metrics{gap:9px}.top-actions{flex-wrap:wrap;justify-content:flex-end}}
 </style>
 </head>
 <body>
-  <section id="lock" class="lock">
-    <div class="lock-card">
-      <div class="brand"><div class="logo">X</div><div><h1>X Control Center</h1><p>لوحة خاصة لإدارة X واكتشاف المحتوى</p></div></div>
-      <label>كلمة المرور</label>
-      <input id="password" type="password" autocomplete="current-password" placeholder="أدخل كلمة المرور">
-      <button id="login" class="primary wide">دخول</button>
-      <div id="loginError" class="error"></div>
-      <p class="note">الدخول بكلمة مرور فقط. لا يوجد اسم مستخدم أو بريد إلكتروني.</p>
-    </div>
-  </section>
-
-  <div id="app" class="app hidden">
-    <aside class="side">
-      <div class="brand"><div class="logo">X</div><div><h1>X Control Center</h1><p>لوحتك الخاصة</p></div></div>
-      <nav>
-        <button data-view="home" class="active">نظرة عامة</button>
-        <button data-view="discover">اكتشاف التغريدات</button>
-        <button data-view="accounts">حسابات X</button>
-        <button data-view="compose">النشر والرد</button>
-        <button data-view="saved">المحفوظات</button>
-        <button data-view="settings">الإعدادات</button>
-      </nav>
-      <div class="side-bottom">
-        <div class="source-line"><span id="sourceDot" class="dot"></span><span id="sourceState">المصدر غير مفحوص</span></div>
-        <button id="logout" class="ghost wide">قفل اللوحة</button>
-      </div>
-    </aside>
-
-    <main>
-      <header>
-        <div><h2 id="title">نظرة عامة</h2><p id="subtitle">لوحة خاصة وآمنة داخل متصفحك</p></div>
-        <div class="actions"><button id="refresh" class="secondary">تحديث</button><button id="theme" class="ghost">المظهر</button></div>
-      </header>
-
-      <section id="view-home" class="view">
-        <div class="stats">
-          <article><span>الحسابات</span><b id="kAccounts">0</b><small>حسابات X المرتبطة</small></article>
-          <article><span>المحفوظات</span><b id="kSaved">0</b><small>تغريدات محفوظة</small></article>
-          <article><span>نتائج البحث</span><b id="kResults">0</b><small>آخر عملية بحث</small></article>
-          <article><span>المصدر</span><b id="kSource">-</b><small>FxTwitter العام</small></article>
-        </div>
-        <div class="two">
-          <section class="card"><div class="card-head"><h3>الترندات الحالية</h3><button id="loadTrends" class="secondary">تحميل</button></div><div id="trendBox" class="trends"><span class="muted">اضغط تحميل لعرض الترندات.</span></div></section>
-          <section class="card"><div class="card-head"><h3>وصول سريع</h3></div><div class="quick"><button data-go="discover" class="secondary">أفضل التغريدات</button><button data-go="accounts" class="secondary">ربط حساب</button><button data-go="compose" class="secondary">كتابة منشور</button><button data-go="settings" class="secondary">إعداد OAuth</button></div><div class="info">البحث يعتمد على بيانات عامة حقيقية. النشر المباشر يتم فقط بعد تفويض حساب X.</div></section>
-        </div>
-        <section class="card"><div class="card-head"><h3>أفضل النتائج الأخيرة</h3></div><div id="homeResults" class="tweets empty">لم يتم تشغيل بحث بعد.</div></section>
-      </section>
-
-      <section id="view-discover" class="view hidden">
-        <section class="card">
-          <div class="card-head"><h3>البحث والترتيب</h3><span class="tag">بيانات عامة حقيقية</span></div>
-          <div class="filters">
-            <input id="query" placeholder="كلمة، هاشتاغ أو حساب">
-            <select id="hours"><option value="1">آخر ساعة</option><option value="3">آخر 3 ساعات</option><option value="5">آخر 5 ساعات</option><option value="10">آخر 10 ساعات</option><option value="20">آخر 20 ساعة</option><option value="24" selected>آخر يوم</option></select>
-            <select id="lang"><option value="all">كل اللغات</option><option value="ar">العربية</option><option value="en">الإنجليزية</option><option value="tr">التركية</option></select>
-            <select id="category"><option value="general">عام</option><option value="news">أخبار</option><option value="tech">تقنية</option><option value="sports">رياضة</option><option value="business">اقتصاد وأعمال</option><option value="crypto">كريبتو</option><option value="entertainment">ترفيه</option><option value="science">علوم</option></select>
-            <select id="sort"><option value="views">الأكثر مشاهدة</option><option value="engagement">الأعلى تفاعلًا</option><option value="likes">الأكثر إعجابًا</option><option value="reposts">الأكثر إعادة نشر</option><option value="recent">الأحدث</option></select>
-            <select id="count"><option value="10">أفضل 10</option><option value="20" selected>أفضل 20</option><option value="30">أفضل 30</option></select>
-          </div>
-          <div class="actions topgap"><button id="search" class="primary">تشغيل البحث</button><button id="trendSearch" class="secondary">بحث من الترندات</button><button id="clearSearch" class="ghost">مسح</button></div>
-        </section>
-        <p id="searchMeta" class="muted"></p>
-        <div id="results" class="tweets empty">حدد الفلاتر ثم شغّل البحث.</div>
-      </section>
-
-      <section id="view-accounts" class="view hidden">
-        <section class="card">
-          <div class="card-head"><h3>حسابات X المرتبطة</h3><button id="connectX" class="primary">ربط حساب X</button></div>
-          <div id="accountList" class="stack empty">لا توجد حسابات مرتبطة.</div>
-        </section>
-        <div class="info">الربط يستخدم OAuth 2.0 PKCE. لا يتم طلب كلمة مرور حساب X ولا تخزينها.</div>
-      </section>
-
-      <section id="view-compose" class="view hidden">
-        <div class="two">
-          <section class="card">
-            <div class="card-head"><h3>منشور جديد</h3><span id="counter" class="tag">0 / 280</span></div>
-            <label>الحساب</label><select id="postAccount"></select>
-            <label>النص</label><textarea id="postText" maxlength="280" placeholder="اكتب المنشور هنا..."></textarea>
-            <div class="actions"><button id="publish" class="primary">نشر الآن</button><button id="intentPost" class="secondary">فتح نافذة X الرسمية</button></div>
-          </section>
-          <section class="card">
-            <div class="card-head"><h3>رد على تغريدة</h3></div>
-            <label>رابط التغريدة أو رقمها</label><input id="replyTarget" placeholder="https://x.com/user/status/...">
-            <label>الرد</label><textarea id="replyText" maxlength="280" placeholder="اكتب الرد..."></textarea>
-            <div class="actions"><button id="reply" class="primary">إرسال الرد</button><button id="intentReply" class="secondary">فتح الرد في X</button></div>
-          </section>
-        </div>
-      </section>
-
-      <section id="view-saved" class="view hidden">
-        <section class="card"><div class="card-head"><h3>المحفوظات</h3><button id="clearSaved" class="danger">مسح الكل</button></div><div id="savedList" class="tweets empty">لا توجد عناصر محفوظة.</div></section>
-      </section>
-
-      <section id="view-settings" class="view hidden">
-        <div class="two">
-          <section class="card"><div class="card-head"><h3>إعداد X OAuth</h3></div><label>Client ID</label><input id="clientId" placeholder="Client ID لتطبيق X"><label>Callback URL</label><input id="callback" readonly><button id="saveOAuth" class="primary">حفظ</button><p class="note">استخدم Callback URL الظاهر هنا داخل إعداد تطبيق X. لا حاجة إلى Client Secret مع PKCE.</p></section>
-          <section class="card"><div class="card-head"><h3>تغيير كلمة مرور اللوحة</h3></div><label>الحالية</label><input id="oldPass" type="password"><label>الجديدة</label><input id="newPass" type="password"><label>تأكيد الجديدة</label><input id="confirmPass" type="password"><button id="changePass" class="primary">تغيير كلمة المرور</button></section>
-          <section class="card"><div class="card-head"><h3>خيارات الاكتشاف</h3></div><label>عدد الترندات المستخدمة للبحث العام</label><input id="seedCount" type="number" min="3" max="15" value="8"><label>حد أدنى للمشاهدات</label><input id="minViews" type="number" min="0" value="0"><button id="savePrefs" class="primary">حفظ الخيارات</button></section>
-          <section class="card"><div class="card-head"><h3>حالة المصادر</h3><button id="health" class="secondary">فحص الآن</button></div><div id="healthBox" class="info">لم يتم الفحص بعد.</div></section>
-        </div>
-      </section>
-    </main>
-
-    <nav class="mobile">
-      <button data-view="home" class="active">الرئيسية</button>
-      <button data-view="discover">اكتشاف</button>
-      <button data-view="accounts">الحسابات</button>
-      <button data-view="compose">نشر</button>
-      <button data-view="settings">إعدادات</button>
-    </nav>
+<section id="lock" class="lock">
+  <div class="lockbox">
+    <div class="brand"><div class="logo">X</div><div><h1>X Trends Scout</h1><p>التغريدات والهاشتاغات الأقوى حسب الفترة</p></div></div>
+    <label>كلمة المرور</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="أدخل كلمة المرور">
+    <button id="login" class="primary wide" style="margin-top:12px">دخول</button>
+    <div id="loginErr" class="loginerr"></div>
+    <p class="note">لا تحتاج إلى ربط حساب X أو إدخال أي مفتاح API. النتائج تفتح مباشرة في X.</p>
   </div>
+</section>
 
-  <div id="toast" class="toast hidden"></div>
-  <script>
-(() => {
+<div id="app" class="hidden">
+  <div class="shell">
+    <header class="top">
+      <div class="brand"><div class="logo">X</div><div><h1>X Trends Scout</h1><p>اختر الفترة، ثم افتح النتيجة مباشرة في X</p></div></div>
+      <div class="top-actions"><div class="status"><span id="dot" class="dot"></span><span id="sourceState">المصدر غير مفحوص</span></div><button id="theme" class="ghost">المظهر</button><button id="settingsBtn" class="ghost">كلمة المرور</button><button id="logout" class="ghost">قفل</button></div>
+    </header>
+
+    <section class="panel">
+      <div class="seg" id="modeSeg">
+        <button class="secondary active" data-mode="tweets">أقوى التغريدات</button>
+        <button class="secondary" data-mode="hashtags">أقوى الهاشتاغات</button>
+      </div>
+      <div class="controls" style="margin-top:11px">
+        <input id="query" class="query" placeholder="اختياري: كلمة أو هاشتاغ مثل #AI">
+        <select id="hours"><option value="1">آخر ساعة</option><option value="3">آخر 3 ساعات</option><option value="5">آخر 5 ساعات</option><option value="10">آخر 10 ساعات</option><option value="20">آخر 20 ساعة</option><option value="24" selected>آخر 24 ساعة</option></select>
+        <select id="lang"><option value="all">كل اللغات</option><option value="ar">العربية</option><option value="en">الإنجليزية</option><option value="tr">التركية</option></select>
+        <select id="category"><option value="general">عام</option><option value="news">أخبار</option><option value="tech">تقنية وذكاء اصطناعي</option><option value="sports">رياضة</option><option value="business">اقتصاد وأعمال</option><option value="crypto">كريبتو</option><option value="entertainment">ترفيه</option><option value="science">علوم</option></select>
+        <select id="sort"><option value="views">حسب المشاهدات</option><option value="engagement">حسب التفاعل</option><option value="recent">الأحدث</option></select>
+        <select id="count"><option value="10">أفضل 10</option><option value="20" selected>أفضل 20</option><option value="30">أفضل 30</option><option value="50">أفضل 50</option></select>
+        <button id="run" class="primary">عرض النتائج</button>
+      </div>
+      <div class="actions"><button id="now" class="secondary">الأشهر الآن</button><button id="clear" class="ghost">مسح البحث</button></div>
+      <div id="trends" class="trends"></div>
+    </section>
+
+    <section class="summary">
+      <div class="stat"><span>الفترة</span><b id="sHours">24 ساعة</b></div>
+      <div class="stat"><span>نتائج تم فحصها</span><b id="sScanned">0</b></div>
+      <div class="stat"><span>نتائج مطابقة</span><b id="sMatched">0</b></div>
+      <div class="stat"><span>آخر تحديث</span><b id="sTime" style="font-size:14px">-</b></div>
+    </section>
+
+    <div id="meta" class="meta">اختر الإعدادات واضغط "عرض النتائج".</div>
+    <main id="results" class="results"><div class="empty">لم يتم تشغيل البحث بعد.</div></main>
+  </div>
+</div>
+
+<div id="settings" class="modal hidden">
+  <div class="modalbox">
+    <h3 style="margin-top:0">تغيير كلمة مرور اللوحة</h3>
+    <label>كلمة المرور الحالية</label><input id="oldPass" type="password">
+    <label>كلمة المرور الجديدة</label><input id="newPass" type="password">
+    <label>تأكيد الجديدة</label><input id="confirmPass" type="password">
+    <div class="actions"><button id="savePass" class="primary">حفظ</button><button id="closeSettings" class="ghost">إغلاق</button></div>
+    <p class="note">تغيير كلمة المرور يُحفظ على هذا المتصفح.</p>
+  </div>
+</div>
+<div id="toast" class="toast hidden"></div>
+
+<script>
+(function(){
 "use strict";
-const $=id=>document.getElementById(id), enc=new TextEncoder();
-const K={auth:"xcc.auth.v3",data:"xcc.data.v3",theme:"xcc.theme.v3"};
-const DEF={salt:"eC1jb250cm9sLWNlbnRlci0yMDI2",iterations:250000,verifier:"JyPlpNAaxAopxlURaqI5m/d5PVrKQUFjkw7NHQgNeso="};
-const S={results:[],trends:[],view:"home",data:{accounts:[],saved:[],prefs:{seedCount:8,minViews:0},xClientId:""}};
-const titles={home:["نظرة عامة","لوحة خاصة لإدارة الاكتشاف والنشر اليدوي"],discover:["اكتشاف التغريدات","بحث وترتيب حسب الزمن واللغة والتفاعل"],accounts:["حسابات X","اختصارات للحسابات التي تديرها"],compose:["النشر والرد","يفتح X الرسمي لإتمام النشر يدويًا"],saved:["المحفوظات","العناصر المحفوظة"],settings:["الإعدادات","الأمان وخيارات الاكتشاف"]};
-const cat={general:"",news:"news breaking عاجل أخبار",tech:"technology AI software تقنية ذكاء اصطناعي",sports:"sports football soccer رياضة كرة",business:"business markets economy اقتصاد أسواق",crypto:"crypto bitcoin ethereum كريبتو",entertainment:"entertainment movies music ترفيه",science:"science space research علوم فضاء"};
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt=n=>{n=Number(n||0);return n>=1e6?(n/1e6).toFixed(1)+"M":n>=1e3?(n/1e3).toFixed(1)+"K":String(n)};
-function toast(m){const e=$("toast");e.textContent=m;e.classList.remove("hidden");setTimeout(()=>e.classList.add("hidden"),3500)}
-function cfg(){try{return JSON.parse(localStorage.getItem(K.auth))||DEF}catch{return DEF}}
-async function verifier(pass,salt,it){const raw=Uint8Array.from(atob(salt),c=>c.charCodeAt(0));const k=await crypto.subtle.importKey("raw",enc.encode(pass),"PBKDF2",false,["deriveBits"]);const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt:raw,iterations:it,hash:"SHA-256"},k,256);return btoa(String.fromCharCode(...new Uint8Array(bits)))}
-function load(){try{S.data=JSON.parse(localStorage.getItem(K.data))||S.data}catch{}}
-function save(){localStorage.setItem(K.data,JSON.stringify(S.data));renderAll()}
-async function login(){const c=cfg(),v=await verifier($("password").value,c.salt,c.iterations);if(v!==c.verifier){$("loginError").textContent="كلمة المرور غير صحيحة.";return}load();$("lock").classList.add("hidden");$("app").classList.remove("hidden");$("loginError").textContent="";renderAll();checkHealth(false)}
+var $=function(id){return document.getElementById(id)},enc=new TextEncoder();
+var DEF={salt:"eC1jb250cm9sLWNlbnRlci0yMDI2",iterations:250000,verifier:"JyPlpNAaxAopxlURaqI5m/d5PVrKQUFjkw7NHQgNeso="};
+var K={auth:"xscout.auth.v1",theme:"xscout.theme.v1"};
+var state={mode:"tweets",rows:[],trends:[],scanned:0,matched:0};
+var cats={general:"",news:"news breaking عاجل أخبار",tech:"technology AI software تقنية ذكاء اصطناعي",sports:"sports football soccer رياضة كرة",business:"business markets economy اقتصاد أسواق",crypto:"crypto bitcoin ethereum كريبتو",entertainment:"entertainment movies music ترفيه",science:"science space research علوم فضاء"};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function fmt(n){n=Number(n||0);if(n>=1000000)return(n/1000000).toFixed(n>=10000000?0:1)+"M";if(n>=1000)return(n/1000).toFixed(n>=10000?0:1)+"K";return String(n)}
+function toast(m){var e=$("toast");e.textContent=m;e.classList.remove("hidden");setTimeout(function(){e.classList.add("hidden")},3300)}
+function authCfg(){try{return JSON.parse(localStorage.getItem(K.auth))||DEF}catch(e){return DEF}}
+async function verify(pass,salt,it){var raw=Uint8Array.from(atob(salt),function(c){return c.charCodeAt(0)});var key=await crypto.subtle.importKey("raw",enc.encode(pass),"PBKDF2",false,["deriveBits"]);var bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt:raw,iterations:it,hash:"SHA-256"},key,256);return btoa(String.fromCharCode.apply(null,new Uint8Array(bits)))}
+async function login(){var c=authCfg(),v=await verify($("password").value,c.salt,c.iterations);if(v!==c.verifier){$("loginErr").textContent="كلمة المرور غير صحيحة.";return}$("loginErr").textContent="";$("lock").classList.add("hidden");$("app").classList.remove("hidden");checkSource();loadTrends()}
 function logout(){$("password").value="";$("app").classList.add("hidden");$("lock").classList.remove("hidden")}
-function setView(v){S.view=v;document.querySelectorAll(".view").forEach(x=>x.classList.add("hidden"));$("view-"+v).classList.remove("hidden");document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===v));$("title").textContent=titles[v][0];$("subtitle").textContent=titles[v][1]}
-async function fx(path,params={}){const u=new URL("https://api.fxtwitter.com"+path);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));const r=await fetch(u);let d={};try{d=await r.json()}catch{}if(!r.ok&&r.status!==404)throw new Error("HTTP "+r.status);return d}
-async function checkHealth(show=true){try{const d=await fx("/2/trends",{type:"trending",count:5}),ok=Array.isArray(d.trends);$("sourceDot").className="dot "+(ok?"ok":"bad");$("sourceState").textContent=ok?"FxTwitter متصل":"المصدر غير متاح";$("kSource").textContent=ok?"متصل":"متعذر";$("healthBox").textContent=ok?"FxTwitter متصل ويستجيب. النشر يتم عبر نافذة X الرسمية.":"المصدر غير متاح حاليًا.";if(show)toast(ok?"المصدر يعمل.":"المصدر غير متاح.")}catch(e){$("sourceDot").className="dot bad";$("sourceState").textContent="تعذر الاتصال";$("kSource").textContent="متعذر";if(show)toast("تعذر فحص المصدر.")}}
-async function loadTrends(){const box=$("trendBox");box.innerHTML='<span class="muted">جار التحميل...</span>';try{const d=await fx("/2/trends",{type:"trending",count:30});S.trends=d.trends||[];box.innerHTML=S.trends.slice(0,20).map((t,i)=>'<button class="trend" data-trend="'+esc(t.name||t.query||"")+'">'+(i+1)+". "+esc(t.name||t.query||"")+"</button>").join("");box.querySelectorAll("[data-trend]").forEach(b=>b.onclick=()=>{$("query").value=b.dataset.trend;setView("discover");runSearch()})}catch(e){box.innerHTML='<span class="error">تعذر تحميل الترندات.</span>'}}
-function langOK(t,l){if(l==="all")return true;if(t.lang)return String(t.lang).toLowerCase()===l;const x=t.text||"";if(l==="ar")return /[\u0600-\u06ff]/.test(x);if(l==="tr")return /[çğıöşüÇĞİÖŞÜ]/.test(x);return /[A-Za-z]/.test(x)}
-const views=t=>Number(t.views??t.view_count??0), score=t=>views(t)*.015+Number(t.likes||0)*2+Number(t.reposts||0)*3+Number(t.replies||0)*1.5+Number(t.quotes||0)*2.5;
-function ago(ts){if(!ts)return"";const s=Math.max(0,Date.now()/1000-Number(ts));return s<3600?Math.floor(s/60)+" د":s<86400?Math.floor(s/3600)+" س":Math.floor(s/86400)+" ي"}
-async function runSearch(){const hrs=Number($("hours").value),l=$("lang").value,sort=$("sort").value,limit=Number($("count").value),cut=Date.now()/1000-hrs*3600;let rows=[];$("results").className="tweets";$("results").innerHTML='<div class="empty">جار جلب النتائج...</div>';try{const typed=$("query").value.trim(),q=typed||cat[$("category").value]||"";if(q){const d=await fx("/2/search",{q,feed:sort==="recent"?"latest":"top",count:100});rows=d.results||[]}else{if(!S.trends.length){const d=await fx("/2/trends",{type:"trending",count:15});S.trends=d.trends||[]}const seeds=S.trends.slice(0,Number(S.data.prefs.seedCount||8));const ps=await Promise.allSettled(seeds.map(x=>fx("/2/search",{q:x.name||x.query,feed:"top",count:30})));ps.forEach(p=>{if(p.status==="fulfilled")rows.push(...(p.value.results||[]))})}const m=new Map();rows.forEach(t=>t&&t.id&&!m.has(String(t.id))&&m.set(String(t.id),t));rows=[...m.values()].filter(t=>Number(t.created_timestamp||0)>=cut).filter(t=>langOK(t,l)).filter(t=>views(t)>=Number(S.data.prefs.minViews||0));const cmp={views:(a,b)=>views(b)-views(a),engagement:(a,b)=>score(b)-score(a),likes:(a,b)=>Number(b.likes||0)-Number(a.likes||0),reposts:(a,b)=>Number(b.reposts||0)-Number(a.reposts||0),recent:(a,b)=>Number(b.created_timestamp||0)-Number(a.created_timestamp||0)}[sort];rows.sort(cmp);S.results=rows.slice(0,limit);$("searchMeta").textContent="تمت معالجة "+m.size+" نتيجة، وبعد الفلاتر بقي "+rows.length+".";renderResults();renderHome();renderAll()}catch(e){$("results").innerHTML='<div class="empty error">تعذر إكمال البحث.</div>'}}
-function card(t,i,saved=false){const a=t.author||{},img=a.avatar_url?'<img class="avatar" src="'+esc(a.avatar_url)+'">':'<div class="avatar-fallback">'+esc((a.name||"?")[0])+"</div>";return '<article class="tweet"><div class="tweet-head"><div class="user">'+img+'<div><div class="name">'+esc(a.name||"مستخدم X")+'</div><div class="handle">@'+esc(a.screen_name||a.username||"unknown")+" · "+ago(t.created_timestamp)+'</div></div></div><div class="rank">'+(i+1)+'</div></div><div class="tweet-text">'+esc(t.text||"")+'</div><div class="metrics"><span>مشاهدات '+fmt(views(t))+'</span><span>إعجاب '+fmt(t.likes)+'</span><span>إعادة نشر '+fmt(t.reposts)+'</span><span>ردود '+fmt(t.replies)+'</span></div><div class="tweet-actions"><button class="secondary" data-a="reply" data-id="'+esc(t.id)+'">رد</button><button class="ghost" data-a="open" data-url="'+esc(t.url||("https://x.com/i/status/"+t.id))+'">فتح</button><button class="'+(saved?"danger":"ghost")+'" data-a="'+(saved?"unsave":"save")+'" data-id="'+esc(t.id)+'">'+(saved?"إزالة":"حفظ")+"</button></div></article>"}
-function bindCards(box,rows){box.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{if(b.dataset.a==="open")return window.open(b.dataset.url,"_blank","noopener");const t=rows.find(x=>String(x.id)===String(b.dataset.id));if(b.dataset.a==="reply"&&t){setView("compose");$("replyTarget").value=t.url||("https://x.com/i/status/"+t.id);$("replyText").focus()}if(b.dataset.a==="save"&&t&&!S.data.saved.some(x=>String(x.id)===String(t.id))){S.data.saved.unshift(t);S.data.saved=S.data.saved.slice(0,200);save();toast("تم الحفظ.")}if(b.dataset.a==="unsave"){S.data.saved=S.data.saved.filter(x=>String(x.id)!==String(b.dataset.id));save()}})}
-function renderResults(){const b=$("results");if(!S.results.length){b.className="tweets empty";b.textContent="لا توجد نتائج مطابقة.";return}b.className="tweets";b.innerHTML=S.results.map((t,i)=>card(t,i)).join("");bindCards(b,S.results)}
-function renderHome(){const b=$("homeResults"),r=S.results.slice(0,5);if(!r.length){b.className="tweets empty";b.textContent="لم يتم تشغيل بحث بعد.";return}b.className="tweets";b.innerHTML=r.map((t,i)=>card(t,i)).join("");bindCards(b,r)}
-function renderSaved(){const b=$("savedList"),r=S.data.saved||[];if(!r.length){b.className="tweets empty";b.textContent="لا توجد عناصر محفوظة.";return}b.className="tweets";b.innerHTML=r.map((t,i)=>card(t,i,true)).join("");bindCards(b,r)}
-function renderAccounts(){const b=$("accountList"),r=S.data.accounts||[];if(!r.length){b.className="stack empty";b.innerHTML='لا توجد حسابات مضافة. <button id="addHandle" class="secondary" style="margin-top:10px">إضافة حساب</button>';const x=$("addHandle");if(x)x.onclick=addAccount;return}b.className="stack";b.innerHTML=r.map((a,i)=>'<div class="account"><div><strong>@'+esc(a.handle)+'</strong><small>اختصار إدارة رقم '+(i+1)+'</small></div><div class="actions"><button class="secondary" data-use="'+esc(a.handle)+'">فتح الحساب</button><button class="danger" data-del="'+i+'">إزالة</button></div></div>').join("")+'<button id="addHandle" class="secondary">إضافة حساب آخر</button>';b.querySelectorAll("[data-use]").forEach(x=>x.onclick=()=>window.open("https://x.com/"+encodeURIComponent(x.dataset.use),"_blank","noopener"));b.querySelectorAll("[data-del]").forEach(x=>x.onclick=()=>{S.data.accounts.splice(Number(x.dataset.del),1);save()});$("addHandle").onclick=addAccount}
-function addAccount(){let h=prompt("أدخل اسم الحساب بدون @");if(!h)return;h=h.trim().replace(/^@/,"");if(h&&!S.data.accounts.some(x=>x.handle.toLowerCase()===h.toLowerCase())){S.data.accounts.push({handle:h});save()}}
-function renderAll(){$("kAccounts").textContent=S.data.accounts.length;$("kSaved").textContent=S.data.saved.length;$("kResults").textContent=S.results.length;$("seedCount").value=S.data.prefs.seedCount||8;$("minViews").value=S.data.prefs.minViews||0;$("clientId").value=S.data.xClientId||"";$("callback").value=location.origin+location.pathname;renderAccounts();renderSaved();renderHome()}
-function intent(text,id=""){const u=new URL("https://twitter.com/intent/tweet");u.searchParams.set("text",text||"");if(id)u.searchParams.set("in_reply_to",id);window.open(u,"_blank","noopener")}
-function tweetId(v){const m=String(v||"").match(/status\/(\d+)/);return m?m[1]:(/^\d+$/.test(String(v||"").trim())?String(v).trim():"")}
-async function changePass(){const c=cfg(),old=await verifier($("oldPass").value,c.salt,c.iterations);if(old!==c.verifier)return toast("كلمة المرور الحالية غير صحيحة.");const n=$("newPass").value;if(n.length<12||n!==$("confirmPass").value)return toast("تحقق من كلمة المرور الجديدة وتأكيدها.");const salt=crypto.getRandomValues(new Uint8Array(18)),s=btoa(String.fromCharCode(...salt)),v=await verifier(n,s,250000);localStorage.setItem(K.auth,JSON.stringify({salt:s,iterations:250000,verifier:v}));$("oldPass").value=$("newPass").value=$("confirmPass").value="";toast("تم تغيير كلمة المرور لهذا المتصفح.")}
-function bind(){
-$("login").onclick=login;$("password").onkeydown=e=>e.key==="Enter"&&login();$("logout").onclick=logout;document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>setView(b.dataset.view));document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>setView(b.dataset.go));$("theme").onclick=()=>{const n=(document.documentElement.dataset.theme||"dark")==="dark"?"light":"dark";document.documentElement.dataset.theme=n;localStorage.setItem(K.theme,n)};$("refresh").onclick=()=>S.view==="discover"?runSearch():loadTrends();$("loadTrends").onclick=loadTrends;$("search").onclick=runSearch;$("trendSearch").onclick=async()=>{await loadTrends();$("query").value="";setView("discover");runSearch()};$("clearSearch").onclick=()=>{$("query").value="";S.results=[];renderResults();renderAll()};$("connectX").onclick=()=>{window.open("https://x.com/i/flow/login","_blank","noopener");toast("افتح حساب X ثم أضف اسم الحساب هنا كاختصار إدارة.");setTimeout(addAccount,700)};$("postText").oninput=()=>$("counter").textContent=$("postText").value.length+" / 280";$("publish").onclick=()=>intent($("postText").value);$("intentPost").onclick=()=>intent($("postText").value);$("reply").onclick=()=>{const id=tweetId($("replyTarget").value);if(!id)return toast("أدخل رابط تغريدة صالحًا.");intent($("replyText").value,id)};$("intentReply").onclick=$("reply").onclick;$("clearSaved").onclick=()=>{if(confirm("مسح المحفوظات؟")){S.data.saved=[];save()}};$("health").onclick=()=>checkHealth(true);$("savePrefs").onclick=()=>{S.data.prefs={seedCount:Math.max(3,Math.min(15,Number($("seedCount").value)||8)),minViews:Math.max(0,Number($("minViews").value)||0)};save();toast("تم حفظ الخيارات.")};$("saveOAuth").onclick=()=>{S.data.xClientId=$("clientId").value.trim();save();toast("تم حفظ Client ID محليًا؛ النسخة الحالية تستخدم نافذة X الرسمية للنشر.")};$("changePass").onclick=changePass}
-document.documentElement.dataset.theme=localStorage.getItem(K.theme)||"dark";bind();
+async function fx(path,params){var u=new URL("https://api.fxtwitter.com"+path);Object.keys(params||{}).forEach(function(k){if(params[k]!==""&&params[k]!=null)u.searchParams.set(k,params[k])});var r=await fetch(u.toString(),{headers:{Accept:"application/json"}}),d={};try{d=await r.json()}catch(e){}if(r.status===404)return d;if(!r.ok)throw new Error("HTTP "+r.status);return d}
+async function checkSource(){try{var d=await fx("/2/trends",{type:"trending",count:3}),ok=Array.isArray(d.trends);$("dot").className="dot "+(ok?"ok":"bad");$("sourceState").textContent=ok?"المصدر متصل":"المصدر غير متاح"}catch(e){$("dot").className="dot bad";$("sourceState").textContent="تعذر الاتصال"}}
+async function loadTrends(){try{var d=await fx("/2/trends",{type:"trending",count:30});state.trends=d.trends||[];renderTrendPills()}catch(e){}}
+function renderTrendPills(){var b=$("trends");if(!state.trends.length){b.innerHTML="";return}b.innerHTML=state.trends.slice(0,16).map(function(t){var n=t.name||t.query||"";return'<a class="trend" href="https://x.com/search?q='+encodeURIComponent(n)+'&src=typed_query&f=live" target="_blank" rel="noopener">'+esc(n)+'</a>'}).join("")}
+function ts(t){if(t.created_timestamp)return Number(t.created_timestamp);if(t.created_at){var x=Date.parse(t.created_at);if(!isNaN(x))return x/1000}return 0}
+function views(t){return Number(t.views==null?t.view_count||0:t.views||0)}
+function engage(t){return views(t)*.01+Number(t.likes||0)*2+Number(t.reposts||0)*3+Number(t.quotes||0)*2.5+Number(t.replies||0)*1.5}
+function langOk(t,l){if(l==="all")return true;if(t.lang)return String(t.lang).toLowerCase()===l;var x=t.text||"";if(l==="ar")return /[\u0600-\u06ff]/.test(x);if(l==="tr")return /[çğıöşüÇĞİÖŞÜ]/.test(x);return /[A-Za-z]/.test(x)&&!/[\u0600-\u06ff]/.test(x)}
+async function searchBoth(q){var a=await Promise.allSettled([fx("/2/search",{q:q,feed:"top",count:100}),fx("/2/search",{q:q,feed:"latest",count:100})]),out=[];a.forEach(function(p){if(p.status==="fulfilled"&&Array.isArray(p.value.results))out=out.concat(p.value.results)});return out}
+async function collect(){var typed=$("query").value.trim(),category=$("category").value,rows=[];if(typed){rows=await searchBoth(typed)}else if(category!=="general"){rows=await searchBoth(cats[category])}else{if(!state.trends.length)await loadTrends();var seeds=state.trends.slice(0,8),jobs=[];seeds.forEach(function(t){var q=t.name||t.query||"";if(q)jobs.push(searchBoth(q))});var pages=await Promise.allSettled(jobs);pages.forEach(function(p){if(p.status==="fulfilled")rows=rows.concat(p.value)})}var map=new Map();rows.forEach(function(t){if(t&&t.id&&!map.has(String(t.id)))map.set(String(t.id),t)});state.scanned=map.size;var hrs=Number($("hours").value),cut=Date.now()/1000-hrs*3600,l=$("lang").value;rows=Array.from(map.values()).filter(function(t){return ts(t)>=cut&&langOk(t,l)});state.matched=rows.length;return rows}
+function sortTweets(rows){var s=$("sort").value;if(s==="views")rows.sort(function(a,b){return views(b)-views(a)});else if(s==="engagement")rows.sort(function(a,b){return engage(b)-engage(a)});else rows.sort(function(a,b){return ts(b)-ts(a)});return rows}
+function ago(t){var s=Math.max(0,Date.now()/1000-ts(t));if(s<60)return"الآن";if(s<3600)return Math.floor(s/60)+" د";if(s<86400)return Math.floor(s/3600)+" س";return Math.floor(s/86400)+" ي"}
+function tweetUrl(t){return t.url||("https://x.com/i/status/"+t.id)}
+function renderTweets(rows){var limit=Number($("count").value),r=sortTweets(rows).slice(0,limit);if(!r.length){$("results").innerHTML='<div class="empty">لا توجد تغريدات مطابقة في هذه الفترة. جرّب فترة أطول أو بحثًا أوسع.</div>';return}$("results").className="results";$("results").innerHTML=r.map(function(t,i){var a=t.author||{},avatar=a.avatar_url?'<img class="avatar" src="'+esc(a.avatar_url)+'" alt="">':'<div class="avatar-fallback">'+esc((a.name||"?").slice(0,1))+'</div>';return'<a class="tweet" href="'+esc(tweetUrl(t))+'" target="_blank" rel="noopener"><div class="tweet-head"><div class="user">'+avatar+'<div><div class="name">'+esc(a.name||"مستخدم X")+'</div><div class="handle">@'+esc(a.screen_name||a.username||"unknown")+' · '+ago(t)+'</div></div></div><div class="rank">'+(i+1)+'</div></div><div class="text">'+esc(t.text||"")+'</div><div class="metrics"><span>مشاهدات '+fmt(views(t))+'</span><span>إعجاب '+fmt(t.likes)+'</span><span>إعادة نشر '+fmt(t.reposts)+'</span><span>ردود '+fmt(t.replies)+'</span><span>اقتباسات '+fmt(t.quotes)+'</span></div><div class="openhint">اضغط لفتح التغريدة في X ↗</div></a>'}).join("")}
+function extractTags(text){var m=String(text||"").match(/#[\p{L}\p{N}_]+/gu);return m||[]}
+function renderHashtags(rows){var m=new Map();rows.forEach(function(t){var unique=new Set(extractTags(t.text||""));unique.forEach(function(raw){var key=raw.toLowerCase(),o=m.get(key)||{tag:raw,posts:0,totalViews:0,peakViews:0,engagement:0};o.posts++;o.totalViews+=views(t);o.peakViews=Math.max(o.peakViews,views(t));o.engagement+=engage(t);m.set(key,o)})});var arr=Array.from(m.values()),s=$("sort").value;if(s==="recent")arr.sort(function(a,b){return b.posts-a.posts});else if(s==="engagement")arr.sort(function(a,b){return b.engagement-a.engagement});else arr.sort(function(a,b){return b.totalViews-a.totalViews});arr=arr.slice(0,Number($("count").value));if(!arr.length){$("results").innerHTML='<div class="empty">لم أجد هاشتاغات كافية داخل التغريدات المطابقة لهذه الفترة.</div>';return}$("results").className="hashgrid";$("results").innerHTML=arr.map(function(h,i){var url="https://x.com/search?q="+encodeURIComponent(h.tag)+"&src=typed_query&f=live";return'<a class="hash" href="'+url+'" target="_blank" rel="noopener"><div class="hash-top"><h3>'+esc(h.tag)+'</h3><div class="num">'+(i+1)+'</div></div><div class="hashmetrics"><div><span>مجموع المشاهدات</span><b>'+fmt(h.totalViews)+'</b></div><div><span>أعلى تغريدة</span><b>'+fmt(h.peakViews)+'</b></div><div><span>عدد التغريدات</span><b>'+fmt(h.posts)+'</b></div></div><div class="openhint">اضغط لفتح بحث الهاشتاغ في X ↗</div></a>'}).join("")}
+async function run(){var btn=$("run");btn.disabled=true;btn.textContent="جار التحميل...";$("results").className="results";$("results").innerHTML='<div class="empty">أجمع النتائج وأرتبها حسب الفترة المختارة...</div>';try{var rows=await collect();state.rows=rows;if(state.mode==="tweets")renderTweets(rows);else renderHashtags(rows);updateSummary();var q=$("query").value.trim();$("meta").textContent=(q?"البحث: "+q+" · ":"بحث عام · ")+$("hours").selectedOptions[0].text+" · "+$("lang").selectedOptions[0].text+" · "+$("category").selectedOptions[0].text}catch(e){$("results").innerHTML='<div class="empty" style="color:var(--bad)">تعذر جلب البيانات حاليًا. جرّب التحديث بعد قليل.</div>';toast("تعذر الوصول إلى المصدر العام.")}finally{btn.disabled=false;btn.textContent="عرض النتائج"}}
+function updateSummary(){$("sHours").textContent=$("hours").selectedOptions[0].text.replace("آخر ","");$("sScanned").textContent=state.scanned;$("sMatched").textContent=state.matched;$("sTime").textContent=new Date().toLocaleTimeString("ar",{hour:"2-digit",minute:"2-digit"})}
+async function changePass(){var c=authCfg(),old=await verify($("oldPass").value,c.salt,c.iterations);if(old!==c.verifier){toast("كلمة المرور الحالية غير صحيحة.");return}var n=$("newPass").value;if(n.length<12||n!==$("confirmPass").value){toast("تحقق من كلمة المرور الجديدة وتأكيدها.");return}var salt=crypto.getRandomValues(new Uint8Array(18)),s=btoa(String.fromCharCode.apply(null,salt)),v=await verify(n,s,250000);localStorage.setItem(K.auth,JSON.stringify({salt:s,iterations:250000,verifier:v}));$("oldPass").value=$("newPass").value=$("confirmPass").value="";$("settings").classList.add("hidden");toast("تم تغيير كلمة المرور.")}
+
+$("login").onclick=login;$("password").addEventListener("keydown",function(e){if(e.key==="Enter")login()});$("logout").onclick=logout;
+$("theme").onclick=function(){var n=(document.documentElement.dataset.theme||"dark")==="dark"?"light":"dark";document.documentElement.dataset.theme=n;localStorage.setItem(K.theme,n)};
+document.querySelectorAll("[data-mode]").forEach(function(b){b.onclick=function(){state.mode=b.dataset.mode;document.querySelectorAll("[data-mode]").forEach(function(x){x.classList.toggle("active",x===b)});if(state.rows.length){if(state.mode==="tweets")renderTweets(state.rows);else renderHashtags(state.rows)}}});
+$("run").onclick=run;$("now").onclick=function(){$("query").value="";$("category").value="general";run()};$("clear").onclick=function(){$("query").value="";$("results").className="results";$("results").innerHTML='<div class="empty">تم مسح البحث. اختر الفترة واضغط عرض النتائج.</div>';$("meta").textContent="جاهز للبحث."};
+$("hours").onchange=updateSummary;$("settingsBtn").onclick=function(){$("settings").classList.remove("hidden")};$("closeSettings").onclick=function(){$("settings").classList.add("hidden")};$("savePass").onclick=changePass;
+document.documentElement.dataset.theme=localStorage.getItem(K.theme)||"dark";updateSummary();
 })();
 </script>
 </body>
