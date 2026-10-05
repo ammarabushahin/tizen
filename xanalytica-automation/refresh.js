@@ -45,10 +45,11 @@ async function main() {
     locale: 'ar',
     timezoneId: TIME_ZONE,
     viewport: { width: 1440, height: 1100 },
+    userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
   });
 
   const page = await context.newPage();
-  page.setDefaultTimeout(15000);
+  page.setDefaultTimeout(20000);
 
   const networkErrors = [];
   page.on('response', (response) => {
@@ -68,39 +69,52 @@ async function main() {
   });
 
   try {
-    await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.goto(LOGIN_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    await page.waitForTimeout(2500);
 
-    const visibleInputs = page.locator('input:visible');
-    if (await visibleInputs.count() < 2) {
-      throw new Error('Could not locate login inputs.');
+    const allInputs = page.locator('input');
+    await allInputs.first().waitFor({ state: 'attached', timeout: 20000 }).catch(() => {});
+
+    const inputCount = await allInputs.count();
+    if (inputCount < 2) {
+      const title = await page.title().catch(() => '');
+      const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 500);
+      throw new Error(`Could not locate login inputs. url=${page.url()} title=${title} inputs=${inputCount} body=${body}`);
     }
 
-    let emailInput = page.locator('input[type="email"]:visible').first();
-    if (await emailInput.count() === 0) emailInput = visibleInputs.nth(0);
+    let emailInput = page.locator('input[type="email"]').first();
+    if (await emailInput.count() === 0) {
+      emailInput = page.locator('input').filter({ has: page.locator('nothing-never-matches') }).first();
+      emailInput = allInputs.nth(0);
+    }
 
-    let passwordInput = page.locator('input[type="password"]:visible').first();
-    if (await passwordInput.count() === 0) passwordInput = visibleInputs.nth(1);
+    let passwordInput = page.locator('input[type="password"]').first();
+    if (await passwordInput.count() === 0) passwordInput = allInputs.nth(1);
 
     await emailInput.fill(email);
     await passwordInput.fill(password);
 
-    let submit = page.locator('button[type="submit"]:visible').first();
+    let submit = page.locator('button[type="submit"]').first();
     if (await submit.count() === 0) {
       submit = page.getByRole('button', { name: /دخول|تسجيل|sign in|login/i }).first();
     }
+    if (await submit.count() === 0) throw new Error('Could not locate login submit button.');
 
-    await submit.click();
+    await Promise.all([
+      page.waitForURL((url) => !url.pathname.includes('/auth/sign-in'), { timeout: 20000 }).catch(() => {}),
+      submit.click(),
+    ]);
+
     await page.waitForTimeout(1500);
-
     if (page.url().includes('/auth/sign-in')) {
-      await page.waitForTimeout(2500);
-    }
-    if (page.url().includes('/auth/sign-in')) {
-      throw new Error('Login failed or authentication was rejected.');
+      const body = (await page.locator('body').innerText().catch(() => '')).replace(/\s+/g, ' ').trim().slice(0, 500);
+      throw new Error(`Login failed or authentication was rejected. body=${body}`);
     }
 
-    await page.goto(USERS_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await page.getByRole('button', { name: 'تحديث X', exact: true }).first().waitFor({ timeout: 20000 });
+    await page.goto(USERS_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+    await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+    await page.getByRole('button', { name: 'تحديث X', exact: true }).first().waitFor({ timeout: 25000 });
 
     const labels = ['تحديث X', 'تحديث فيسبوك', 'تحديث إنستغرام'];
     const summary = {
@@ -122,7 +136,8 @@ async function main() {
 
       for (let i = 0; i < count; i++) {
         if (!page.url().includes('/dashboard/users')) {
-          await page.goto(USERS_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+          await page.goto(USERS_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
+          await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
         }
 
         const currentButtons = page.getByRole('button', { name: label, exact: true });
