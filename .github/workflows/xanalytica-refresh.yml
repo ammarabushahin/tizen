@@ -1,0 +1,67 @@
+name: XAnalytica Refresh
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1,5,9,13,17,21 * * *'
+      timezone: 'Europe/Stockholm'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: xanalytica-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout automation branch
+        uses: actions/checkout@v4
+        with:
+          ref: xanalytica-automation
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: xanalytica-automation
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Run XAnalytica refresh
+        id: refresh
+        continue-on-error: true
+        working-directory: xanalytica-automation
+        env:
+          XANALYTICA_EMAIL: ${{ secrets.XANALYTICA_EMAIL }}
+          XANALYTICA_PASSWORD: ${{ secrets.XANALYTICA_PASSWORD }}
+          FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
+        shell: bash
+        run: |
+          set -o pipefail
+          node refresh.js 2>&1 | tee result.log
+
+      - name: Write run summary
+        if: always()
+        working-directory: xanalytica-automation
+        shell: bash
+        run: |
+          echo '## XAnalytica Refresh' >> "$GITHUB_STEP_SUMMARY"
+          if [ -f result.log ]; then
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            tail -n 1 result.log >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'No result log was produced.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Mark workflow failed when refresh failed
+        if: steps.refresh.outcome == 'failure'
+        run: exit 1
