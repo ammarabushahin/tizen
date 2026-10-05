@@ -7,6 +7,7 @@ on:
       - xanalytica-automation
     paths:
       - 'xanalytica-automation/**'
+      - '.github/workflows/xanalytica-refresh.yml'
   schedule:
     - cron: '0 1,5,9,13,17,21 * * *'
       timezone: 'Europe/Stockholm'
@@ -21,7 +22,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 60
 
     steps:
       - name: Checkout automation branch
