@@ -1,0 +1,13 @@
+{
+  "name": "xanalytica-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scheduled XAnalytica refresh automation",
+  "main": "refresh.js",
+  "scripts": {
+    "start": "node refresh.js"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0"
+  }
+}
