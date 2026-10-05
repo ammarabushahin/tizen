@@ -1,0 +1,1 @@
+Trigger XAnalytica automation test after repository secrets were configured.
