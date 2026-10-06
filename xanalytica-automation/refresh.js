@@ -52,15 +52,40 @@ async function main() {
   page.setDefaultTimeout(20000);
 
   const networkErrors = [];
+  const apiTraces = [];
   page.on('response', (response) => {
-    const type = response.request().resourceType();
-    if ((type === 'xhr' || type === 'fetch') && response.status() >= 400) {
-      networkErrors.push({
-        at: Date.now(),
-        status: response.status(),
-        method: response.request().method(),
-        url: response.url(),
-      });
+    const request = response.request();
+    const type = request.resourceType();
+    if (type === 'xhr' || type === 'fetch') {
+      try {
+        const u = new URL(response.url());
+        let bodyKeys = [];
+        const postData = request.postData();
+        if (postData) {
+          try {
+            const parsed = JSON.parse(postData);
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+              bodyKeys = Object.keys(parsed).sort();
+            }
+          } catch {}
+        }
+        apiTraces.push({
+          status: response.status(),
+          method: request.method(),
+          origin: u.origin,
+          path: u.pathname,
+          queryKeys: [...u.searchParams.keys()].sort(),
+          bodyKeys,
+        });
+      } catch {}
+      if (response.status() >= 400) {
+        networkErrors.push({
+          at: Date.now(),
+          status: response.status(),
+          method: request.method(),
+          url: response.url(),
+        });
+      }
     }
   });
 
@@ -181,6 +206,9 @@ async function main() {
     }
 
     summary.ok = summary.issued === 33 && summary.failed === 0;
+    summary.api_traces = [...new Map(
+      apiTraces.map((trace) => [JSON.stringify(trace), trace])
+    ).values()];
     console.log(JSON.stringify(summary));
 
     if (!summary.ok) process.exitCode = 1;
