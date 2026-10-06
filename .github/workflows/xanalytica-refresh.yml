@@ -1,4 +1,5 @@
 name: XAnalytica Refresh
+# Push-triggered runs are treated as forced refreshes for manual verification.
 
 on:
   workflow_dispatch:
