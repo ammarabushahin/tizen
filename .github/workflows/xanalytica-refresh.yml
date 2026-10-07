@@ -36,13 +36,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          if [ "${{ github.event_name }}" != "schedule" ]; then
-            echo "run=1" >> "$GITHUB_OUTPUT"
-            echo "slot=manual-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
-            echo "reason=manual_or_push" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
           SLOT="$(python3 - <<'PY'
           from datetime import datetime, timedelta, time
           from zoneinfo import ZoneInfo
@@ -68,7 +61,10 @@ jobs:
 
           echo "slot=$SLOT" >> "$GITHUB_OUTPUT"
 
-          if [ "$LAST" = "$SLOT" ]; then
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "run=1" >> "$GITHUB_OUTPUT"
+            echo "reason=manual_or_push" >> "$GITHUB_OUTPUT"
+          elif [ "$LAST" = "$SLOT" ]; then
             echo "run=0" >> "$GITHUB_OUTPUT"
             echo "reason=slot_already_completed" >> "$GITHUB_OUTPUT"
           else
@@ -121,8 +117,8 @@ jobs:
             echo 'No result log was produced.' >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Mark successful scheduled slot
-        if: github.event_name == 'schedule' && steps.slot.outputs.run == '1' && steps.refresh.outcome == 'success'
+      - name: Mark successful refresh slot
+        if: steps.slot.outputs.run == '1' && steps.refresh.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
