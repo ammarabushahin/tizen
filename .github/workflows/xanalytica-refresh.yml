@@ -36,28 +36,43 @@ jobs:
         run: |
           set -euo pipefail
 
-          SLOT="$(python3 - <<'PY'
+          LAST="$(cat .xanalytica-last-slot 2>/dev/null || true)"
+
+          SLOT="$(LAST_SLOT="$LAST" EVENT_NAME="${{ github.event_name }}" python3 - <<'PY'
+          import os
           from datetime import datetime, timedelta, time
           from zoneinfo import ZoneInfo
 
           tz = ZoneInfo("Europe/Stockholm")
           now = datetime.now(tz)
           targets = (1, 5, 9, 13, 17, 21)
-          candidates = []
+          last_raw = os.environ.get("LAST_SLOT", "").strip()
+          event_name = os.environ.get("EVENT_NAME", "")
 
-          for delta in (0, -1):
-              day = (now + timedelta(days=delta)).date()
-              for hour in targets:
-                  candidate = datetime.combine(day, time(hour, 0), tzinfo=tz)
-                  if candidate <= now:
-                      candidates.append(candidate)
+          def slots_between(start_date, end_date):
+              day = start_date
+              while day <= end_date:
+                  for hour in targets:
+                      yield datetime.combine(day, time(hour, 0), tzinfo=tz)
+                  day += timedelta(days=1)
 
-          latest = max(candidates)
-          print(latest.strftime("%Y-%m-%dT%H:%M%z"))
+          if event_name == "schedule" and last_raw:
+              last = datetime.strptime(last_raw, "%Y-%m-%dT%H:%M%z").astimezone(tz)
+              due = [slot for slot in slots_between(last.date(), now.date()) if last < slot <= now]
+              selected = min(due) if due else last
+          else:
+              candidates = []
+              for delta in (0, -1):
+                  day = (now + timedelta(days=delta)).date()
+                  for hour in targets:
+                      candidate = datetime.combine(day, time(hour, 0), tzinfo=tz)
+                      if candidate <= now:
+                          candidates.append(candidate)
+              selected = max(candidates)
+
+          print(selected.strftime("%Y-%m-%dT%H:%M%z"))
           PY
           )"
-
-          LAST="$(cat .xanalytica-last-slot 2>/dev/null || true)"
 
           echo "slot=$SLOT" >> "$GITHUB_OUTPUT"
 
