@@ -1,5 +1,4 @@
 name: XAnalytica Refresh
-# Push-triggered runs are treated as forced refreshes for manual verification.
 
 on:
   workflow_dispatch:
@@ -8,10 +7,9 @@ on:
       - xanalytica-automation
     paths:
       - 'xanalytica-automation/**'
-      - '.github/workflows/xanalytica-refresh.yml'
   schedule:
-    - cron: '0 1,5,9,13,17,21 * * *'
-      timezone: 'Europe/Stockholm'
+    # Frequent lightweight checks absorb GitHub scheduler delays.
+    - cron: '7,27,47 * * * *'
 
 permissions:
   contents: write
@@ -30,26 +28,76 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: xanalytica-automation
+          fetch-depth: 0
+
+      - name: Determine refresh slot
+        id: slot
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "run=1" >> "$GITHUB_OUTPUT"
+            echo "slot=manual-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
+            echo "reason=manual_or_push" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SLOT="$(python3 - <<'PY'
+          from datetime import datetime, timedelta, time
+          from zoneinfo import ZoneInfo
+
+          tz = ZoneInfo("Europe/Stockholm")
+          now = datetime.now(tz)
+          targets = (1, 5, 9, 13, 17, 21)
+          candidates = []
+
+          for delta in (0, -1):
+              day = (now + timedelta(days=delta)).date()
+              for hour in targets:
+                  candidate = datetime.combine(day, time(hour, 0), tzinfo=tz)
+                  if candidate <= now:
+                      candidates.append(candidate)
+
+          latest = max(candidates)
+          print(latest.strftime("%Y-%m-%dT%H:%M%z"))
+          PY
+          )"
+
+          LAST="$(cat .xanalytica-last-slot 2>/dev/null || true)"
+
+          echo "slot=$SLOT" >> "$GITHUB_OUTPUT"
+
+          if [ "$LAST" = "$SLOT" ]; then
+            echo "run=0" >> "$GITHUB_OUTPUT"
+            echo "reason=slot_already_completed" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=1" >> "$GITHUB_OUTPUT"
+            echo "reason=slot_due" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Node.js
+        if: steps.slot.outputs.run == '1'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install dependencies
+        if: steps.slot.outputs.run == '1'
         working-directory: xanalytica-automation
         run: |
           npm install
           npx playwright install --with-deps chromium
 
       - name: Run XAnalytica refresh
+        if: steps.slot.outputs.run == '1'
         id: refresh
         continue-on-error: true
         working-directory: xanalytica-automation
         env:
           XANALYTICA_EMAIL: ${{ secrets.XANALYTICA_EMAIL }}
           XANALYTICA_PASSWORD: ${{ secrets.XANALYTICA_PASSWORD }}
-          FORCE_RUN: ${{ github.event_name != 'schedule' && '1' || '0' }}
+          FORCE_RUN: '1'
         shell: bash
         run: |
           set -o pipefail
@@ -61,25 +109,33 @@ jobs:
         shell: bash
         run: |
           echo '## XAnalytica Refresh' >> "$GITHUB_STEP_SUMMARY"
+          echo "Slot: `${{ steps.slot.outputs.slot }}`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Decision: `${{ steps.slot.outputs.reason }}`" >> "$GITHUB_STEP_SUMMARY"
           if [ -f result.log ]; then
             echo '```json' >> "$GITHUB_STEP_SUMMARY"
             tail -n 1 result.log >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
+          elif [ "${{ steps.slot.outputs.run }}" = "0" ]; then
+            echo 'No refresh was needed; this slot was already completed.' >> "$GITHUB_STEP_SUMMARY"
           else
             echo 'No result log was produced.' >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Monthly keepalive
-        if: always() && github.event_name == 'schedule'
+      - name: Mark successful scheduled slot
+        if: github.event_name == 'schedule' && steps.slot.outputs.run == '1' && steps.refresh.outcome == 'success'
         shell: bash
         run: |
-          if [ "$(TZ=Europe/Stockholm date +'%d-%H')" = '01-01' ]; then
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit --allow-empty -m 'chore: keep XAnalytica automation active'
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git pull --rebase origin xanalytica-automation
+          printf '%s\n' "${{ steps.slot.outputs.slot }}" > .xanalytica-last-slot
+          git add .xanalytica-last-slot
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: mark XAnalytica slot ${{ steps.slot.outputs.slot }}"
             git push origin HEAD:xanalytica-automation
           fi
 
       - name: Mark workflow failed when refresh failed
-        if: steps.refresh.outcome == 'failure'
+        if: steps.slot.outputs.run == '1' && steps.refresh.outcome == 'failure'
         run: exit 1
