@@ -120,8 +120,8 @@ jobs:
         shell: bash
         run: |
           echo '## XAnalytica Refresh' >> "$GITHUB_STEP_SUMMARY"
-          echo "Slot: `${{ steps.slot.outputs.slot }}`" >> "$GITHUB_STEP_SUMMARY"
-          echo "Decision: `${{ steps.slot.outputs.reason }}`" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Slot: `%s`\n' "${{ steps.slot.outputs.slot }}" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Decision: `%s`\n' "${{ steps.slot.outputs.reason }}" >> "$GITHUB_STEP_SUMMARY"
           if [ -f result.log ]; then
             echo '```json' >> "$GITHUB_STEP_SUMMARY"
             tail -n 1 result.log >> "$GITHUB_STEP_SUMMARY"
